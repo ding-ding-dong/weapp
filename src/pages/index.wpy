@@ -1,20 +1,28 @@
-<style lang="less">
-</style>
 <template>
-  <view class="container">
-    Hello world
-  </view>
+
+<FeedList :feeds="feeds"></FeedList>
+
 </template>
 
 <script>
-  import wepy from 'wepy'
 
-  export default class Index extends wepy.page {
-    config = {
-      navigationBarTitleText: 'test'
-    }
-    onLoad() {
-      console.log('onLoad')
-    }
+import wepy from 'wepy'
+import FeedList from '../components/FeedList'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: 'Index'
   }
+  components = {
+    FeedList
+  }
+  data = {
+    feeds: [{
+      name: 'name1'
+    }, {
+      name: 'name2'
+    }]
+  }
+}
+
 </script>
