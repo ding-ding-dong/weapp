@@ -1,6 +1,6 @@
 <template>
 
-<FeedList :feeds="feeds"></FeedList>
+<FeedList :feeds.sync="feeds"></FeedList>
 
 </template>
 
@@ -17,11 +17,12 @@ export default class Index extends wepy.page {
     FeedList
   }
   data = {
-    feeds: [{
-      name: 'name1'
-    }, {
-      name: 'name2'
-    }]
+    feeds: []
+  }
+  async onLoad() {
+    const feeds = await wepy.request('https://mystist.com/api/feeds?date=1516118400000')
+    this.feeds = feeds.data
+    this.$apply()
   }
 }
 
