@@ -1,0 +1,48 @@
+<style lang="less">
+  .title {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  .rich-p {
+    margin: .8rem 0;
+    font-size: 1rem;
+    line-height: 160%;
+    user-select: text;
+  }
+  .rich-img {
+    width: 100%;
+    height: auto;
+  }
+</style>
+
+<template>
+
+<view class="page">
+  <view class="page__bd">
+    <view class="weui-article">
+      <view class="weui-article__h1 title">{{feed.feed.title}}</view>
+      <view class="weui-article__section">
+        <rich-text class="article-container" nodes="{{description}}"></rich-text>
+      </view>
+    </view>
+  </view>
+</view>
+
+</template>
+
+<script>
+
+import wepy from 'wepy'
+
+export default class FeedDetail extends wepy.component {
+  props = {
+    feed: Object,
+  }
+  computed = {
+    description() {
+      return this.feed.uuid ? this.feed.feed.description.replace(/<img/g, '<img class="rich-img"').replace(/<p/g, '<p class="rich-p"') : null
+    }
+  }
+}
+
+</script>

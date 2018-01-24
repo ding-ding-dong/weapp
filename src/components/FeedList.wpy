@@ -12,27 +12,29 @@
 
 <view class="weui-panel">
   <view class="weui-panel__bd">
-    <repeat for="{{feeds}}" key="uuid">
-      <view class="weui-media-box weui-media-box_text">
-        <view class="weui-media-box__title weui-media-box__title_in-text">{{item.feed.title}}</view>
-        <view class="weui-media-box__desc">{{item.feed.description}}</view>
-        <!-- <view class="weui-media-box__info weui-flex">
-          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
+    <repeat for="{{feeds}}" key="uuid" item="feed">
+      <navigator url="./detail?uuid={{feed.uuid}}" hover-class="navigator-hover">
+        <view class="weui-media-box weui-media-box_text">
+          <view class="weui-media-box__title weui-media-box__title_in-text">{{feed.feed.title}}</view>
+          <view class="weui-media-box__desc">{{feed.feed.description}}</view>
+          <!-- <view class="weui-media-box__info weui-flex">
+            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+              <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
+            </view>
+            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+              <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
+            </view>
+            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+              <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
+            </view>
+          </view> -->
+          <view class="weui-media-box__info">
+            <view class="weui-media-box__info__meta">文字来源</view>
+            <view class="weui-media-box__info__meta">时间</view>
+            <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">其它信息</view>
           </view>
-          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
-          </view>
-          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
-          </view>
-        </view> -->
-        <view class="weui-media-box__info">
-          <view class="weui-media-box__info__meta">文字来源</view>
-          <view class="weui-media-box__info__meta">时间</view>
-          <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">其它信息</view>
         </view>
-      </view>
+      </navigator>
     </repeat>
   </view>
 </view>

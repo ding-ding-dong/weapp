@@ -1,0 +1,29 @@
+<template>
+
+<FeedDetail :feed.sync="feed"></FeedDetail>
+
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import FeedDetail from '../components/FeedDetail'
+
+export default class Detail extends wepy.page {
+  config = {
+    navigationBarTitleText: 'Detail'
+  }
+  components = {
+    FeedDetail
+  }
+  data = {
+    feed: {}
+  }
+  async onLoad({ uuid }) {
+    const feed = await wepy.request(`https://mystist.com/api/feeds/${uuid}`)
+    this.feed = feed.data
+    this.$apply()
+  }
+}
+
+</script>

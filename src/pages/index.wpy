@@ -20,7 +20,7 @@ export default class Index extends wepy.page {
     feeds: []
   }
   async onLoad() {
-    const feeds = await wepy.request('https://mystist.com/api/feeds?date=1516118400000')
+    const feeds = await wepy.request('https://mystist.com/api/feeds?date=1516118400000&key=36kr')
     this.feeds = feeds.data
     this.$apply()
   }
