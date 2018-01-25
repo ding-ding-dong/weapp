@@ -1,12 +1,30 @@
+<style lang="less">
+
+.container {
+  padding: 8px 0;
+}
+
+.picker-container {
+  padding: 0 15px;
+}
+
+</style>
+
 <template>
 
-<FeedList :feeds.sync="feeds"></FeedList>
+<view class="container">
+  <picker class="picker-container" mode="date" value="{{date}}" bindchange="bindDateChange">
+    <view>选择日期: {{date}}</view>
+  </picker>
+  <FeedList :feeds.sync="feeds"></FeedList>
+</view>
 
 </template>
 
 <script>
 
 import wepy from 'wepy'
+import moment from 'moment'
 import FeedList from '../components/FeedList'
 
 export default class Index extends wepy.page {
@@ -17,12 +35,24 @@ export default class Index extends wepy.page {
     FeedList
   }
   data = {
-    feeds: []
+    feeds: [],
+    date: moment().format('YYYY-MM-DD'),
   }
-  async onLoad() {
-    const feeds = await wepy.request('https://mystist.com/api/feeds?date=1516809600000')
+  methods = {
+    bindDateChange: function(e) {
+      this.date = e.detail.value
+      this.fetch()
+    }
+  }
+  async fetch() {
+    wx.showNavigationBarLoading()
+    const feeds = await wepy.request(`https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}`)
     this.feeds = feeds.data
     this.$apply()
+    wx.hideNavigationBarLoading()
+  }
+  onLoad() {
+    this.fetch()
   }
 }
 
