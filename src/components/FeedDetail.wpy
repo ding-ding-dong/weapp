@@ -8,9 +8,11 @@
     font-size: 1rem;
     line-height: 160%;
     user-select: text;
+    font-weight: lighter;
+    letter-spacing: .05rem;
   }
   .rich-img {
-    width: 100%;
+    max-width: 100%;
     height: auto;
   }
 </style>
@@ -40,8 +42,13 @@ export default class FeedDetail extends wepy.component {
   }
   computed = {
     description() {
-      return this.feed.uuid ? this.feed.feed.description.replace(/<img/g, '<img class="rich-img"').replace(/<p/g, '<p class="rich-p"') : null
+      return this.feed.uuid ? this.purge(this.feed.feed.description) : null
     }
+  }
+  purge(markups) {
+    return markups
+      .replace(/<img/g, '<img class="rich-img"')
+      .replace(/<p/g, '<p class="rich-p"')
   }
 }
 

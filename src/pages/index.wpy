@@ -11,7 +11,7 @@ import FeedList from '../components/FeedList'
 
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: 'Index'
+    navigationBarTitleText: '叮咚小咚'
   }
   components = {
     FeedList
@@ -20,7 +20,7 @@ export default class Index extends wepy.page {
     feeds: []
   }
   async onLoad() {
-    const feeds = await wepy.request('https://mystist.com/api/feeds?date=1516118400000&key=36kr')
+    const feeds = await wepy.request('https://mystist.com/api/feeds?date=1516809600000')
     this.feeds = feeds.data
     this.$apply()
   }

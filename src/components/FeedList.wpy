@@ -6,6 +6,21 @@
   }
 }
 
+.favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.favicon-meta {
+  display: flex;
+  align-items: center;
+}
+
+.favicon-meta-info {
+  margin-left: 6px;
+}
+
 </style>
 
 <template>
@@ -13,25 +28,22 @@
 <view class="weui-panel">
   <view class="weui-panel__bd">
     <repeat for="{{feeds}}" key="uuid" item="feed">
-      <navigator url="./detail?uuid={{feed.uuid}}" hover-class="navigator-hover">
-        <view class="weui-media-box weui-media-box_text">
-          <view class="weui-media-box__title weui-media-box__title_in-text">{{feed.feed.title}}</view>
-          <view class="weui-media-box__desc">{{feed.feed.description}}</view>
-          <!-- <view class="weui-media-box__info weui-flex">
-            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-              <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
-            </view>
-            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-              <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
-            </view>
-            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-              <image class="weui-media-box__thumb" src="http://s1.bdstatic.com/r/www/cache/static/home/img/qrcode/zbios_x2_9d645d9.png" />
-            </view>
-          </view> -->
-          <view class="weui-media-box__info">
-            <view class="weui-media-box__info__meta">文字来源</view>
-            <view class="weui-media-box__info__meta">时间</view>
-            <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">其它信息</view>
+      <navigator class="weui-media-box weui-media-box_text" url="./detail?uuid={{feed.uuid}}" hover-class="navigator-hover">
+        <view class="weui-media-box__title weui-media-box__title_in-text">{{feed.feed.title}}</view>
+        <view class="weui-media-box__desc">{{feed.feed.description}}</view>
+        <block wx-if="{{feed.feed.images.length > 0}}">
+          <view class="weui-media-box__info weui-flex">
+            <repeat for="{{feed.feed.images}}" key="index" item="image">
+              <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                <image class="weui-media-box__thumb" src="{{image}}" />
+              </view>
+            </repeat>
+          </view>
+        </block>
+        <view class="weui-media-box__info">
+          <view class="weui-media-box__info__meta favicon-meta">
+            <image class="favicon" src="https://api.52miku.cn/favicon/?url={{feed.source.url}}"></image>
+            <view class="favicon-meta-info">{{feed.source.name}}</view>
           </view>
         </view>
       </navigator>

@@ -11,7 +11,7 @@ import FeedDetail from '../components/FeedDetail'
 
 export default class Detail extends wepy.page {
   config = {
-    navigationBarTitleText: 'Detail'
+    navigationBarTitleText: '叮咚小咚'
   }
   components = {
     FeedDetail
