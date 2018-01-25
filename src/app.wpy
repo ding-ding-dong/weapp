@@ -31,12 +31,13 @@ export default class extends wepy.app {
       backgroundColor: '#F7F7FA',
       list: [{
         pagePath: 'pages/index',
+        selectedIconPath: './images/icons8-home-filled-81.png',
+        iconPath: './images/icons8-home-81.png',
         text: '首页',
       }, {
         pagePath: 'pages/index',
-        text: '重点',
-      }, {
-        pagePath: 'pages/index',
+        selectedIconPath: './images/icons8-customer-filled-81.png',
+        iconPath: './images/icons8-customer-81.png',
         text: '我的订阅',
       }]
     },
