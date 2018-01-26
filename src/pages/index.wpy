@@ -17,6 +17,17 @@
     <view>选择日期: {{date}}</view>
   </picker>
   <FeedList :feeds.sync="feeds"></FeedList>
+  <block wx:if="{{isLoadingMore}}">
+    <view class="weui-loadmore">
+      <view class="weui-loading"></view>
+      <view class="weui-loadmore__tips">正在加载...</view>
+    </view>
+  </block>
+  <block wx:if="{{isLoadingCompleted}}">
+    <view class="weui-loadmore weui-loadmore_line weui-loadmore_dot">
+      <view class="weui-loadmore__tips weui-loadmore__tips_in-line weui-loadmore__tips_in-dot"></view>
+    </view>
+  </block>
 </view>
 
 </template>
@@ -37,6 +48,9 @@ export default class Index extends wepy.page {
   data = {
     feeds: [],
     date: moment().format('YYYY-MM-DD'),
+    page: 1,
+    isLoadingMore: false,
+    isLoadingCompleted: false,
   }
   methods = {
     bindDateChange: function(e) {
@@ -46,13 +60,40 @@ export default class Index extends wepy.page {
   }
   async fetch() {
     wx.showNavigationBarLoading()
-    const feeds = await wepy.request(`https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}`)
-    this.feeds = feeds.data
+    const feeds = await wepy.request(`http://localhost:8080/api/feeds?date=${moment(this.date).valueOf()}&page=${this.page}`)
+    if (this.isLoadingMore) {
+      this.feeds = this.feeds.concat(feeds.data)
+    } else {
+      this.feeds = feeds.data
+    }
     this.$apply()
     wx.hideNavigationBarLoading()
+    return feeds
   }
   onLoad() {
     this.fetch()
+  }
+  async onPullDownRefresh() {
+    wx.showNavigationBarLoading()
+    await this.fetch()
+    wx.stopPullDownRefresh({
+      complete: () => wx.hideNavigationBarLoading()
+    })
+  }
+  async onReachBottom() {
+    if (!this.isLoadingCompleted) {
+      this.isLoadingMore = true
+      this.page += 1
+
+      const feeds = await this.fetch()
+      this.isLoadingMore = false
+
+      if (feeds.data.length === 0) {
+        this.isLoadingCompleted = true
+      }
+
+      this.$apply()
+    }
   }
 }
 

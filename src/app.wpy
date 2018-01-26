@@ -23,7 +23,8 @@ export default class extends wepy.app {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'black',
+      enablePullDownRefresh: true,
     },
     tabBar: {
       color: '#7F8389',
@@ -41,10 +42,6 @@ export default class extends wepy.app {
         text: '我的订阅',
       }]
     },
-  }
-
-  onLaunch() {
-    console.log('on launch')
   }
 }
 
