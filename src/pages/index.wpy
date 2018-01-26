@@ -60,13 +60,12 @@ export default class Index extends wepy.page {
   }
   async fetch() {
     wx.showNavigationBarLoading()
-    const feeds = await wepy.request(`https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}&page=${this.page}`)
-    if (this.isLoadingMore) {
-      this.feeds = this.feeds.concat(feeds.data)
-    } else {
-      this.feeds = feeds.data
-    }
+
+    const url = `https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}` + (this.isLoadingMore ? `&page=${this.page}` : '')
+    const feeds = await wepy.request(url)
+    this.feeds = this.isLoadingMore ? this.feeds.concat(feeds.data) : feeds.data
     this.$apply()
+
     wx.hideNavigationBarLoading()
     return feeds
   }
