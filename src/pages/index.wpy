@@ -60,7 +60,7 @@ export default class Index extends wepy.page {
   }
   async fetch() {
     wx.showNavigationBarLoading()
-    const feeds = await wepy.request(`http://localhost:8080/api/feeds?date=${moment(this.date).valueOf()}&page=${this.page}`)
+    const feeds = await wepy.request(`https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}&page=${this.page}`)
     if (this.isLoadingMore) {
       this.feeds = this.feeds.concat(feeds.data)
     } else {
