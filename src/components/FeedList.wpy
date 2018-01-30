@@ -21,6 +21,10 @@
   margin-left: 6px;
 }
 
+.thumbnail {
+  background-size: cover;
+}
+
 </style>
 
 <template>
@@ -35,7 +39,7 @@
           <view class="weui-media-box__info weui-flex">
             <repeat for="{{feed.feed.images}}" key="index" item="image">
               <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                <image class="weui-media-box__thumb" src="{{image}}" />
+                <view class="weui-media-box__thumb thumbnail" style="background-image: url('{{image}}')"></view>
               </view>
             </repeat>
           </view>
