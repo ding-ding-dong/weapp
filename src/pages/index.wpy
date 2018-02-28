@@ -17,6 +17,7 @@
     <view>选择日期: {{date}}</view>
   </picker>
   <FeedList :feeds.sync="feeds"></FeedList>
+  <view class="weui-cells__title" wx:if="{{feeds.length === 0}}">暂无内容...</view>
   <block wx:if="{{isLoading}}">
     <view class="weui-loadmore">
       <view class="weui-loading"></view>
@@ -61,18 +62,25 @@ export default class Index extends wepy.page {
     }
   }
   async fetch() {
-    wx.showNavigationBarLoading()
-    this.isFetching = true
-    this.$apply()
+    try {
+      wx.showNavigationBarLoading()
+      this.isFetching = true
+      this.$apply()
 
-    const url = `https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}&page=` + (this.isLoading ? this.page : 1)
-    const feeds = await wepy.request(url)
-    this.feeds = this.isLoading ? this.feeds.concat(feeds.data) : feeds.data
-    this.isFetching = false
-    this.$apply()
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
 
-    wx.hideNavigationBarLoading()
-    return feeds
+      const url = `https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}&page=${this.isLoading ? this.page : 1}&sessionId=${sessionId}`
+      const feeds = await wepy.request(url)
+      this.feeds = this.isLoading ? this.feeds.concat(feeds.data) : feeds.data
+
+      return feeds
+    } catch (e) {
+      return []
+    } finally {
+      this.isFetching = false
+      this.$apply()
+      wx.hideNavigationBarLoading()
+    }
   }
   onLoad() {
     this.fetch()

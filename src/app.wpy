@@ -18,6 +18,7 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/detail',
+      'pages/subscription',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -36,7 +37,7 @@ export default class extends wepy.app {
         iconPath: './images/icons8-home-81.png',
         text: '首页',
       }, {
-        pagePath: 'pages/index',
+        pagePath: 'pages/subscription',
         selectedIconPath: './images/icons8-customer-filled-81.png',
         iconPath: './images/icons8-customer-81.png',
         text: '我的订阅',

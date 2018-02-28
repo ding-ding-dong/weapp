@@ -1,0 +1,114 @@
+<style lang="less">
+
+.weui-cells {
+  .weui-cell {
+    &:before {
+      left: 0;
+    }
+  }
+}
+
+.mini-btn{
+  margin: 0;
+}
+
+</style>
+
+<template>
+
+<view class="weui-cells weui-cells_after-title">
+  <repeat for="{{sourcesWithSubscription}}">
+    <view class="weui-cell">
+      <view class="weui-cell__bd">{{item.name}}</view>
+      <button wx:if="{{!item.hasSubscribed}}" class="weui-btn mini-btn" type="primary" size="mini" plain="true" @tap="subscribe({{item.key}})">订阅</button>
+      <button wx:if="{{item.hasSubscribed}}" class="weui-btn mini-btn" type="warn" size="mini" plain="true" @tap="unsubscribe({{item.key}})">取消订阅</button>
+    </view>
+  </repeat>
+</view>
+
+</template>
+
+<script>
+
+import wepy from 'wepy'
+
+export default class Subscription extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的订阅'
+  }
+  data = {
+    sources: [],
+    subscriptions: [],
+    sourcesWithSubscription: [],
+  }
+  methods = {
+    async subscribe(sourceKey) {
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+      const url = 'https://mystist.com/api/subscriptions'
+
+      await wepy.request({ url, method: 'POST', data: { sessionId, sourceKey } })
+      this.fetch()
+    },
+    async unsubscribe(sourceKey) {
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+      const url = 'https://mystist.com/api/subscriptions'
+
+      await wepy.request({ url, method: 'DELETE', data: { sessionId, sourceKey } })
+      this.fetch()
+    }
+  }
+  async onLoad() {
+    await this.checkSession()
+    this.fetch()
+  }
+  async fetch() {
+    await Promise.all([this.fetchSources(), this.fetchSubscriptions()])
+    this.combine()
+  }
+  async fetchSources() {
+    wx.showNavigationBarLoading()
+
+    const url = 'https://mystist.com/api/sources'
+    const result = await wepy.request(url)
+    this.sources = result.data
+    this.$apply()
+
+    wx.hideNavigationBarLoading()
+  }
+  async checkSession() {
+    try {
+      await wepy.checkSession()
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+      
+      if (!sessionId) {
+        await this.login()
+      }
+    } catch (e) {
+      await this.login()
+    }
+  }
+  async login() {
+    const code = (await wepy.login()).code
+    const url = 'https://mystist.com/api/auth'
+    const result = await wepy.request({ url, method: 'POST', data: { code } })
+
+    if (result.data) {
+      await wepy.setStorage({ key: 'sessionId', data: result.data })
+    }
+  }
+  async fetchSubscriptions() {
+    const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+    const url = `https://mystist.com/api/subscriptions?sessionId=${sessionId}`
+
+    this.subscriptions = (await wepy.request(url)).data
+    this.$apply()
+  }
+  combine() {
+    this.sourcesWithSubscription = this.sources.map(source => {
+      return Object.assign({}, source, { hasSubscribed: !!this.subscriptions.find(subscription => subscription === source.key) })
+    })
+    this.$apply()
+  }
+}
+
+</script>
