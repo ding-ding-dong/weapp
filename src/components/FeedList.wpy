@@ -46,7 +46,7 @@
         </block>
         <view class="weui-media-box__info">
           <view class="weui-media-box__info__meta favicon-meta">
-            <image class="favicon" src="https://api.52miku.cn/favicon/?url={{feed.source.url}}"></image>
+            <image class="favicon" src="{{feed.source.icon}}"></image>
             <view class="favicon-meta-info">{{feed.source.name}}</view>
           </view>
         </view>
@@ -61,9 +61,35 @@
 
 import wepy from 'wepy'
 
+const makeUrlObject = url => {
+  const protocolIndex = url.indexOf(':')
+  const protocol = url.slice(0, protocolIndex + 1)
+
+  const slashIndex = url.slice(protocolIndex + 3).indexOf('/')
+  const host = url.slice(protocolIndex + 3, slashIndex ? protocolIndex + 3 + slashIndex : -1)
+
+  const origin = `${protocol}//${host}`
+
+  return {
+    protocol,
+    host,
+    origin,
+  }
+}
+
 export default class FeedList extends wepy.component {
   props = {
     feeds: Array,
+  }
+  computed = {
+    computedFeeds() {
+      return this.feeds.map(feed => {
+        const icon = makeUrlObject(feed.source.url).origin + '/favicon.ico'
+        feed.source = Object.assign({}, feed.source, { icon })
+
+        return feed
+      })
+    }
   }
 }
 

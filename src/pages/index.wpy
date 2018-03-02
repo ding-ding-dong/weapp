@@ -37,7 +37,9 @@
 
 import wepy from 'wepy'
 import moment from 'moment'
+
 import FeedList from '../components/FeedList'
+import config from '../config'
 
 export default class Index extends wepy.page {
   config = {
@@ -69,7 +71,7 @@ export default class Index extends wepy.page {
 
       const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
 
-      const url = `https://mystist.com/api/feeds?date=${moment(this.date).valueOf()}&page=${this.isLoading ? this.page : 1}&sessionId=${sessionId}`
+      const url = `${config.baseUrl}/api/feeds?date=${moment(this.date).valueOf()}&page=${this.isLoading ? this.page : 1}&sessionId=${sessionId}`
       const feeds = await wepy.request(url)
       this.feeds = this.isLoading ? this.feeds.concat(feeds.data) : feeds.data
 

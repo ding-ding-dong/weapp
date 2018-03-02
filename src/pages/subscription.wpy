@@ -32,6 +32,8 @@
 
 import wepy from 'wepy'
 
+import config from '../config'
+
 export default class Subscription extends wepy.page {
   config = {
     navigationBarTitleText: '我的订阅'
@@ -44,14 +46,14 @@ export default class Subscription extends wepy.page {
   methods = {
     async subscribe(sourceKey) {
       const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
-      const url = 'https://mystist.com/api/subscriptions'
+      const url = `${config.baseUrl}/api/subscriptions`
 
       await wepy.request({ url, method: 'POST', data: { sessionId, sourceKey } })
       this.fetch()
     },
     async unsubscribe(sourceKey) {
       const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
-      const url = 'https://mystist.com/api/subscriptions'
+      const url = `${config.baseUrl}/api/subscriptions`
 
       await wepy.request({ url, method: 'DELETE', data: { sessionId, sourceKey } })
       this.fetch()
@@ -68,7 +70,7 @@ export default class Subscription extends wepy.page {
   async fetchSources() {
     wx.showNavigationBarLoading()
 
-    const url = 'https://mystist.com/api/sources'
+    const url = `${config.baseUrl}/api/sources`
     const result = await wepy.request(url)
     this.sources = result.data
     this.$apply()
@@ -79,9 +81,15 @@ export default class Subscription extends wepy.page {
     try {
       await wepy.checkSession()
       const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
-      
+
       if (!sessionId) {
         await this.login()
+      } else {
+        const hasSession = (await wepy.request(`${config.baseUrl}/api/auth?sessionId=${sessionId}`)).data
+
+        if (!hasSession) {
+          await this.login()
+        }
       }
     } catch (e) {
       await this.login()
@@ -89,7 +97,7 @@ export default class Subscription extends wepy.page {
   }
   async login() {
     const code = (await wepy.login()).code
-    const url = 'https://mystist.com/api/auth'
+    const url = `${config.baseUrl}/api/auth`
     const result = await wepy.request({ url, method: 'POST', data: { code } })
 
     if (result.data) {
@@ -98,7 +106,7 @@ export default class Subscription extends wepy.page {
   }
   async fetchSubscriptions() {
     const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
-    const url = `https://mystist.com/api/subscriptions?sessionId=${sessionId}`
+    const url = `${config.baseUrl}/api/subscriptions?sessionId=${sessionId}`
 
     this.subscriptions = (await wepy.request(url)).data
     this.$apply()

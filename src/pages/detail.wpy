@@ -7,7 +7,9 @@
 <script>
 
 import wepy from 'wepy'
+
 import FeedDetail from '../components/FeedDetail'
+import config from '../config'
 
 export default class Detail extends wepy.page {
   config = {
@@ -20,7 +22,7 @@ export default class Detail extends wepy.page {
     feed: {}
   }
   async onLoad({ uuid }) {
-    const feed = await wepy.request(`https://mystist.com/api/feeds/${uuid}`)
+    const feed = await wepy.request(`${config.baseUrl}/api/feeds/${uuid}`)
     this.feed = feed.data
     this.$apply()
   }
