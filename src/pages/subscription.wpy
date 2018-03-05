@@ -33,6 +33,7 @@
 import wepy from 'wepy'
 
 import config from '../config'
+import { checkSession } from '../utils'
 
 export default class Subscription extends wepy.page {
   config = {
@@ -60,7 +61,7 @@ export default class Subscription extends wepy.page {
     }
   }
   async onLoad() {
-    await this.checkSession()
+    await checkSession()
     this.fetch()
   }
   async fetch() {
@@ -76,33 +77,6 @@ export default class Subscription extends wepy.page {
     this.$apply()
 
     wx.hideNavigationBarLoading()
-  }
-  async checkSession() {
-    try {
-      await wepy.checkSession()
-      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
-
-      if (!sessionId) {
-        await this.login()
-      } else {
-        const hasSession = (await wepy.request(`${config.baseUrl}/api/auth?sessionId=${sessionId}`)).data
-
-        if (!hasSession) {
-          await this.login()
-        }
-      }
-    } catch (e) {
-      await this.login()
-    }
-  }
-  async login() {
-    const code = (await wepy.login()).code
-    const url = `${config.baseUrl}/api/auth`
-    const result = await wepy.request({ url, method: 'POST', data: { code } })
-
-    if (result.data) {
-      await wepy.setStorage({ key: 'sessionId', data: result.data })
-    }
   }
   async fetchSubscriptions() {
     const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data

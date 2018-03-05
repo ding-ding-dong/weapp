@@ -40,6 +40,7 @@ import moment from 'moment'
 
 import FeedList from '../components/FeedList'
 import config from '../config'
+import { checkSession } from '../utils'
 
 export default class Index extends wepy.page {
   config = {
@@ -84,7 +85,8 @@ export default class Index extends wepy.page {
       wx.hideNavigationBarLoading()
     }
   }
-  onLoad() {
+  async onLoad() {
+    await checkSession()
     this.fetch()
   }
   restoreState() {
