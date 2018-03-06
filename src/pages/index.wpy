@@ -13,11 +13,14 @@
 <template>
 
 <view class="container">
-  <picker class="picker-container" mode="date" value="{{date}}" bindchange="bindDateChange">
+  <picker class="picker-container" mode="date" value="{{date}}" end="{{date}}" bindchange="bindDateChange">
     <view>选择日期: {{date}}</view>
   </picker>
   <FeedList :feeds.sync="feeds"></FeedList>
-  <view class="weui-cells__title" wx:if="{{feeds.length === 0}}">暂无内容...</view>
+  <block wx:if="{{!isFetching && feeds.length === 0}}">
+    <view class="weui-cells__title">该日期暂无内容更新...</view>
+    <view class="weui-cells__title">您可以点击“我的订阅”订阅更多您感兴趣的内容</view>
+  </block>
   <block wx:if="{{isLoading}}">
     <view class="weui-loadmore">
       <view class="weui-loading"></view>
@@ -53,7 +56,7 @@ export default class Index extends wepy.page {
     feeds: [],
     date: moment().format('YYYY-MM-DD'),
     page: 1,
-    isFetching: false,
+    isFetching: true,
     isLoading: false,
     hasCompleted: false,
   }
