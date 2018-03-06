@@ -8,22 +8,36 @@
   }
 }
 
-.mini-btn{
+.mini-btn {
   margin: 0;
+}
+
+.actions {
+  margin-left: 6px;
 }
 
 </style>
 
 <template>
 
-<view class="weui-cells weui-cells_after-title">
-  <repeat for="{{sourcesWithSubscription}}">
-    <view class="weui-cell">
-      <view class="weui-cell__bd">{{item.name}}</view>
-      <button wx:if="{{!item.hasSubscribed}}" class="weui-btn mini-btn" type="primary" size="mini" plain="true" @tap="subscribe({{item.key}})">订阅</button>
-      <button wx:if="{{item.hasSubscribed}}" class="weui-btn mini-btn" type="warn" size="mini" plain="true" @tap="unsubscribe({{item.key}})">取消订阅</button>
-    </view>
-  </repeat>
+<view class="weui-panel weui-panel_access">
+  <view class="weui-panel__bd">
+    <repeat for="{{sourcesWithSubscription}}">
+      <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+        <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+          <image class="weui-media-box__thumb" src="{{item.icon}}" />
+        </view>
+        <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+          <view class="weui-media-box__title">{{item.name}}</view>
+          <view class="weui-media-box__desc">{{item.description}}</view>
+        </view>
+        <view class="actions">
+          <button wx:if="{{!item.hasSubscribed}}" class="weui-btn mini-btn" type="primary" size="mini" plain="true" @tap="subscribe({{item.key}})">订阅</button>
+          <button wx:if="{{item.hasSubscribed}}" class="weui-btn mini-btn" type="warn" size="mini" plain="true" @tap="unsubscribe({{item.key}})">取消订阅</button>
+        </view>
+      </navigator>
+    </repeat>
+  </view>
 </view>
 
 </template>
@@ -33,7 +47,7 @@
 import wepy from 'wepy'
 
 import config from '../config'
-import { checkSession } from '../utils'
+import { checkSession, makeUrlObject } from '../utils'
 
 export default class Subscription extends wepy.page {
   config = {
@@ -73,7 +87,13 @@ export default class Subscription extends wepy.page {
 
     const url = `${config.baseUrl}/api/sources`
     const result = await wepy.request(url)
-    this.sources = result.data
+
+    this.sources = result.data.map(source => {
+      const icon = makeUrlObject(source.url).origin + '/favicon.ico'
+      source = Object.assign({}, source, { icon })
+
+      return source
+    })
     this.$apply()
 
     wx.hideNavigationBarLoading()

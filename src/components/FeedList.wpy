@@ -61,21 +61,7 @@
 
 import wepy from 'wepy'
 
-const makeUrlObject = url => {
-  const protocolIndex = url.indexOf(':')
-  const protocol = url.slice(0, protocolIndex + 1)
-
-  const slashIndex = url.slice(protocolIndex + 3).indexOf('/')
-  const host = url.slice(protocolIndex + 3, slashIndex ? protocolIndex + 3 + slashIndex : -1)
-
-  const origin = `${protocol}//${host}`
-
-  return {
-    protocol,
-    host,
-    origin,
-  }
-}
+import { makeUrlObject } from '../utils'
 
 export default class FeedList extends wepy.component {
   props = {

@@ -30,3 +30,19 @@ export const checkSession = async () => {
     await login()
   }
 }
+
+export const makeUrlObject = url => {
+  const protocolIndex = url.indexOf(':')
+  const protocol = url.slice(0, protocolIndex + 1)
+
+  const slashIndex = url.slice(protocolIndex + 3).indexOf('/')
+  const host = url.slice(protocolIndex + 3, slashIndex ? protocolIndex + 3 + slashIndex : -1)
+
+  const origin = `${protocol}//${host}`
+
+  return {
+    protocol,
+    host,
+    origin,
+  }
+}
