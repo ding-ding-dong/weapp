@@ -50,7 +50,7 @@
   </view>
   <FeedList :feeds.sync="feeds"></FeedList>
   <block wx:if="{{!isFetching && feeds.length === 0}}">
-    <view class="weui-cells__title">该订阅最近30天内无内容更新...</view>
+    <view class="weui-cells__title">该订阅最近无内容更新...</view>
   </block>
   <block wx:if="{{isLoading}}">
     <view class="weui-loadmore">
