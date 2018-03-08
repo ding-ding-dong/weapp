@@ -8,7 +8,7 @@
 
 <template>
 
-<picker class="picker-container" mode="date" value="{{date}}" end="{{date}}" bindchange="bindDateChange">
+<picker class="picker-container" mode="date" value="{{date}}" start="2018-01-01" end="{{today}}" bindchange="bindDateChange">
   <view>选择日期: {{date}}</view>
 </picker>
 <FeedList :feeds.sync="feeds"></FeedList>
@@ -53,6 +53,7 @@ export default class Index extends wepy.page {
     isFetching: true,
     isLoading: false,
     hasCompleted: false,
+    today: moment().format('YYYY-MM-DD'),
   }
   methods = {
     bindDateChange: e => {
