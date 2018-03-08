@@ -5,7 +5,7 @@
   }
   .rich-p {
     margin: .8rem 0;
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 160%;
     user-select: text;
     font-weight: lighter;
