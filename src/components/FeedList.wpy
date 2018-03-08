@@ -6,19 +6,19 @@
   }
 }
 
-.favicon {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-}
-
 .favicon-meta {
   display: flex;
   align-items: center;
-}
 
-.favicon-meta-info {
-  margin-left: 6px;
+  .favicon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+  }
+
+  .favicon-meta-info {
+    margin-left: 6px;
+  }
 }
 
 .thumbnail {
@@ -48,6 +48,7 @@
           <view class="weui-media-box__info__meta favicon-meta">
             <image class="favicon" src="{{feed.source.icon}}"></image>
             <view class="favicon-meta-info">{{feed.source.name}}</view>
+            <view class="favicon-meta-info">{{feed.feed.dateString}}</view>
           </view>
         </view>
       </navigator>

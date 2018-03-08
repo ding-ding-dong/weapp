@@ -14,6 +14,10 @@
 
 .actions {
   margin-left: 6px;
+
+  .actions {
+    display: inline-block;
+  }
 }
 
 </style>
@@ -23,7 +27,7 @@
 <view class="weui-panel weui-panel_access">
   <view class="weui-panel__bd">
     <repeat for="{{sourcesWithSubscription}}">
-      <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+      <navigator url="./subscription-detail?source={{item.stringifySource}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
         <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
           <image class="weui-media-box__thumb" src="{{item.icon}}" />
         </view>
@@ -32,8 +36,12 @@
           <view class="weui-media-box__desc">{{item.description}}</view>
         </view>
         <view class="actions">
-          <button wx:if="{{!item.hasSubscribed}}" class="weui-btn mini-btn" type="primary" size="mini" plain="true" @tap="subscribe({{item.key}})">订阅</button>
-          <button wx:if="{{item.hasSubscribed}}" class="weui-btn mini-btn" type="warn" size="mini" plain="true" @tap="unsubscribe({{item.key}})">取消订阅</button>
+          <view class="action" @tap.stop="subscribe">
+            <button wx:if="{{!item.hasSubscribed}}" class="weui-btn mini-btn" type="primary" size="mini" plain="true" @tap="subscribe({{item.key}})">订阅</button>
+          </view>
+          <view class="action" @tap.stop="unsubscribe">
+            <button wx:if="{{item.hasSubscribed}}" class="weui-btn mini-btn" type="warn" size="mini" plain="true" @tap="unsubscribe({{item.key}})">取消订阅</button>
+          </view>
         </view>
       </navigator>
     </repeat>
@@ -74,7 +82,7 @@ export default class Subscription extends wepy.page {
       this.fetch()
     }
   }
-  async onLoad() {
+  async onShow() {
     await checkSession()
     this.fetch()
   }
@@ -107,7 +115,10 @@ export default class Subscription extends wepy.page {
   }
   combine() {
     this.sourcesWithSubscription = this.sources.map(source => {
-      return Object.assign({}, source, { hasSubscribed: !!this.subscriptions.find(subscription => subscription === source.key) })
+      source = Object.assign({}, source, { hasSubscribed: !!this.subscriptions.find(subscription => subscription === source.key) })
+      source.stringifySource = JSON.stringify(source)
+
+      return source
     })
     this.$apply()
   }

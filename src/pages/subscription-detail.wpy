@@ -1,0 +1,172 @@
+<style lang="less">
+
+.container {
+  display: flex;
+  padding: 10px 15px 0;
+
+  .info-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+
+    .favicon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+    .info {
+      display: inline-block;
+      margin-left: 6px;
+    }
+  }
+
+  .actions {
+    display: flex;
+  }
+}
+
+</style>
+
+<template>
+
+<block wx:if="{{source}}">
+  <view class="container">
+    <view class="info-container">
+      <image class="favicon" src="{{source.icon}}"></image>
+      <view class="info">{{source.name}}</view>
+    </view>
+    <view class="actions">
+      <button wx:if="{{!source.hasSubscribed}}" class="weui-btn mini-btn" type="primary" size="mini" plain="true" @tap="subscribe({{source.key}})">订阅</button>
+      <button wx:if="{{source.hasSubscribed}}" class="weui-btn mini-btn" type="warn" size="mini" plain="true" @tap="unsubscribe({{source.key}})">取消订阅</button>
+    </view>
+  </view>
+  <FeedList :feeds.sync="feeds"></FeedList>
+  <block wx:if="{{!isFetching && feeds.length === 0}}">
+    <view class="weui-cells__title">该订阅最近30天内无内容更新...</view>
+  </block>
+  <block wx:if="{{isLoading}}">
+    <view class="weui-loadmore">
+      <view class="weui-loading"></view>
+      <view class="weui-loadmore__tips">正在加载...</view>
+    </view>
+  </block>
+  <block wx:if="{{hasCompleted}}">
+    <view class="weui-loadmore weui-loadmore_line weui-loadmore_dot">
+      <view class="weui-loadmore__tips weui-loadmore__tips_in-line weui-loadmore__tips_in-dot"></view>
+    </view>
+  </block>
+</block>
+
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import moment from 'moment'
+
+import FeedList from '../components/FeedList'
+import config from '../config'
+import { checkSession } from '../utils'
+
+export default class SubscriptionDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: '浏览订阅详情'
+  }
+  components = {
+    FeedList
+  }
+  data = {
+    source: null,
+    feeds: [],
+    date: moment().format('YYYY-MM-DD'),
+    page: 1,
+    isFetching: true,
+    isLoading: false,
+    hasCompleted: false,
+  }
+  methods = {
+    async subscribe(sourceKey) {
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+      const url = `${config.baseUrl}/api/subscriptions`
+
+      await wepy.request({ url, method: 'POST', data: { sessionId, sourceKey } })
+      this.source = Object.assign({}, this.source, { hasSubscribed: true })
+      this.$apply()
+    },
+    async unsubscribe(sourceKey) {
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+      const url = `${config.baseUrl}/api/subscriptions`
+
+      await wepy.request({ url, method: 'DELETE', data: { sessionId, sourceKey } })
+      this.source = Object.assign({}, this.source, { hasSubscribed: false })
+      this.$apply()
+    }
+  }
+  async fetch() {
+    try {
+      wx.showNavigationBarLoading()
+      this.isFetching = true
+      this.$apply()
+
+      const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
+
+      const url = `${config.baseUrl}/api/feeds?date=${moment(this.date).valueOf()}&page=${this.isLoading ? this.page : 1}&sessionId=${sessionId}&key=${this.source.key}`
+      const feeds = await wepy.request(url)
+      this.feeds = this.isLoading ? this.feeds.concat(feeds.data) : feeds.data
+      this.feeds = this.feeds.map(feed => {
+        feed.feed = Object.assign({}, feed.feed, { dateString: moment(feed.feed.date).format('YYYY-MM-DD HH:mm') })
+        return feed
+      })
+      this.$apply()
+
+      return feeds
+    } catch (e) {
+      return []
+    } finally {
+      this.isFetching = false
+      this.$apply()
+      wx.hideNavigationBarLoading()
+    }
+  }
+  async onLoad({ source }) {
+    this.source = JSON.parse(source)
+    this.$apply()
+
+    await checkSession()
+    this.fetch()
+  }
+  restoreState() {
+    this.page = 1
+    this.hasCompleted = false
+    this.$apply()
+  }
+  async onPullDownRefresh() {
+    if (!this.isFetching) {
+      wx.showNavigationBarLoading()
+
+      await this.fetch()
+      this.restoreState()
+
+      wx.stopPullDownRefresh({
+        complete: () => wx.hideNavigationBarLoading()
+      })
+    }
+  }
+  async onReachBottom() {
+    if (!this.isFetching && !this.hasCompleted) {
+      this.isLoading = true
+      this.page += 1
+
+      const feeds = await this.fetch()
+      this.isLoading = false
+
+      if (feeds.data.length === 0) {
+        this.hasCompleted = true
+      }
+
+      this.$apply()
+    }
+  }
+}
+
+</script>

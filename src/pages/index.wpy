@@ -1,9 +1,5 @@
 <style lang="less">
 
-.container {
-  padding: 8px 0;
-}
-
 .picker-container {
   padding: 0 15px;
 }
@@ -12,27 +8,25 @@
 
 <template>
 
-<view class="container">
-  <picker class="picker-container" mode="date" value="{{date}}" end="{{date}}" bindchange="bindDateChange">
-    <view>选择日期: {{date}}</view>
-  </picker>
-  <FeedList :feeds.sync="feeds"></FeedList>
-  <block wx:if="{{!isFetching && feeds.length === 0}}">
-    <view class="weui-cells__title">该日期暂无内容更新...</view>
-    <view class="weui-cells__title">您可以点击“我的订阅”订阅更多您感兴趣的内容</view>
-  </block>
-  <block wx:if="{{isLoading}}">
-    <view class="weui-loadmore">
-      <view class="weui-loading"></view>
-      <view class="weui-loadmore__tips">正在加载...</view>
-    </view>
-  </block>
-  <block wx:if="{{hasCompleted}}">
-    <view class="weui-loadmore weui-loadmore_line weui-loadmore_dot">
-      <view class="weui-loadmore__tips weui-loadmore__tips_in-line weui-loadmore__tips_in-dot"></view>
-    </view>
-  </block>
-</view>
+<picker class="picker-container" mode="date" value="{{date}}" end="{{date}}" bindchange="bindDateChange">
+  <view>选择日期: {{date}}</view>
+</picker>
+<FeedList :feeds.sync="feeds"></FeedList>
+<block wx:if="{{!isFetching && feeds.length === 0}}">
+  <view class="weui-cells__title">该日期暂无内容更新...</view>
+  <view class="weui-cells__title">您可以点击“我的订阅”订阅更多您感兴趣的内容</view>
+</block>
+<block wx:if="{{isLoading}}">
+  <view class="weui-loadmore">
+    <view class="weui-loading"></view>
+    <view class="weui-loadmore__tips">正在加载...</view>
+  </view>
+</block>
+<block wx:if="{{hasCompleted}}">
+  <view class="weui-loadmore weui-loadmore_line weui-loadmore_dot">
+    <view class="weui-loadmore__tips weui-loadmore__tips_in-line weui-loadmore__tips_in-dot"></view>
+  </view>
+</block>
 
 </template>
 
@@ -78,6 +72,11 @@ export default class Index extends wepy.page {
       const url = `${config.baseUrl}/api/feeds?date=${moment(this.date).valueOf()}&page=${this.isLoading ? this.page : 1}&sessionId=${sessionId}`
       const feeds = await wepy.request(url)
       this.feeds = this.isLoading ? this.feeds.concat(feeds.data) : feeds.data
+      this.feeds = this.feeds.map(feed => {
+        feed.feed = Object.assign({}, feed.feed, { dateString: moment(feed.feed.date).format('YYYY-MM-DD HH:mm') })
+        return feed
+      })
+      this.$apply()
 
       return feeds
     } catch (e) {
