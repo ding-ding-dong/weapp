@@ -31,7 +31,7 @@
 
 <view class="weui-panel">
   <view class="weui-panel__bd">
-    <repeat for="{{feeds}}" key="uuid" item="feed">
+    <repeat for="{{computedFeeds}}" key="uuid" item="feed">
       <navigator class="weui-media-box weui-media-box_text" url="./detail?uuid={{feed.uuid}}" hover-class="navigator-hover">
         <view class="weui-media-box__title weui-media-box__title_in-text">{{feed.feed.title}}</view>
         <view class="weui-media-box__desc">{{feed.feed.description}}</view>

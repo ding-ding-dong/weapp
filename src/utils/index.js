@@ -14,6 +14,8 @@ const login = async () => {
 
 export const checkSession = async () => {
   try {
+    wx.showNavigationBarLoading()
+
     await wepy.checkSession()
     const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
 
@@ -28,6 +30,8 @@ export const checkSession = async () => {
     }
   } catch (e) {
     await login()
+  } finally {
+    wx.hideNavigationBarLoading()
   }
 }
 

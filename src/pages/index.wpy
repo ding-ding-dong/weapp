@@ -71,8 +71,8 @@ export default class Index extends wepy.page {
       const sessionId = (await wepy.getStorage({ key: 'sessionId' })).data
 
       const url = `${config.baseUrl}/api/feeds?date=${moment(this.date).valueOf()}&page=${this.isLoading ? this.page : 1}&sessionId=${sessionId}`
-      const feeds = await wepy.request(url)
-      this.feeds = this.isLoading ? this.feeds.concat(feeds.data) : feeds.data
+      const feeds = (await wepy.request(url)).data
+      this.feeds = this.isLoading ? this.feeds.concat(feeds) : feeds
       this.feeds = this.feeds.map(feed => {
         feed.feed = Object.assign({}, feed.feed, { dateString: moment(feed.feed.date).format('YYYY-MM-DD HH:mm') })
         return feed
@@ -117,7 +117,7 @@ export default class Index extends wepy.page {
       const feeds = await this.fetch()
       this.isLoading = false
 
-      if (feeds.data.length === 0) {
+      if (feeds.length === 0) {
         this.hasCompleted = true
       }
 
